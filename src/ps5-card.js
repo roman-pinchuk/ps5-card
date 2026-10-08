@@ -147,8 +147,7 @@ customElements.define("ps5-card-editor", Ps5CardEditor);
 customElements.define(CARD_TYPE, Ps5Card);
 window.addEventListener("ll-custom", (event) => {
   const detail = event.detail || {};
-  const action = detail.action || detail;
-  const request = action.ps5_card;
+  const request = detail.ps5_card;
   if (request?.action !== "open") return;
   const entity = request.power_entity;
   [...(window.__ps5Cards || [])].find((card) => !entity || card.config.power_entity === entity)?.openPopup();
