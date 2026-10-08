@@ -1,4 +1,4 @@
-/* ps5-card v0.5.0 */
+/* ps5-card v0.5.1 */
 const CARD_TYPE = "ps5-card";
 const DEFAULT_NAME = "PS5 Pro";
 
@@ -16,6 +16,12 @@ const idleArtwork = () => `
       <path class="mark-blue-right" d="M198 172c46-25 99-35 162-31v50c-55-7-106 1-153 25l-9-3Z" />
       <path class="mark-teal-right" d="M198 172v41l79 27c26-14 54-24 83-29v-20c-63-4-116 6-162 31Z" />
       <path class="mark-yellow-right" d="M198 213v27h-44v-42l44-12Z" />
+    </svg>
+    <svg class="ps5-symbols" viewBox="0 0 360 70" aria-hidden="true">
+      <path d="m42 61 22-43 22 43H42Z" />
+      <circle cx="139" cy="39" r="21" />
+      <path d="m207 18 42 43m0-43-42 43" />
+      <rect x="291" y="18" width="42" height="42" />
     </svg>
   </div>`;
 
@@ -39,8 +45,9 @@ const popupStyles = `
 .ps5-backdrop { position:absolute; inset:-15%; width:130%; height:130%; background-position:center; background-size:cover; filter:blur(28px) saturate(1.3); opacity:.52; z-index:-3; }
 .ps5-idle-glow { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 35%,#244fac,#131e3d 45%,#090e1c 100%); z-index:-3; }
 .ps5-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,12,25,.38),rgba(7,12,25,.06) 40%,rgba(7,12,25,.94) 100%); z-index:-2; }
-.idle-art { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:min(330px,90%); filter:drop-shadow(0 0 18px rgba(73,137,255,.25)); }
-.ps5-color-mark { display:block; width:100%; height:auto; }
+.idle-art { position:relative; z-index:1; display:flex; align-items:center; flex-direction:column; gap:10px; width:min(300px,90%); filter:drop-shadow(0 0 18px rgba(73,137,255,.25)); }
+.ps5-color-mark { display:block; width:100%; height:auto; max-height:180px; }
+.ps5-symbols { display:block; width:82%; height:auto; color:#b5ceff; opacity:.82; fill:none; stroke:currentColor; stroke-width:4; stroke-linejoin:round; }
 .mark-red { fill:#ed1b24; }.mark-yellow,.mark-yellow-right { fill:#ffbd19; }.mark-teal-left,.mark-teal-right { fill:#09aa9f; }.mark-blue-left,.mark-blue-right { fill:#0879bd; }
 .popup.light .ps5-idle-glow { background:radial-gradient(ellipse at 50% 35%,#dbeafe,#eef4ff 48%,#f7f9ff 100%); }
 .popup.light .ps5-shade { background:linear-gradient(180deg,rgba(247,249,255,.08),rgba(247,249,255,.18) 40%,rgba(247,249,255,.9) 100%); }
