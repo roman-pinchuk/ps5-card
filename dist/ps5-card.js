@@ -1,4 +1,4 @@
-/* ps5-card v0.2.0 */
+/* ps5-card v0.2.1 */
 const CARD_TYPE = "ps5-card";
 const DEFAULT_NAME = "PS5 Pro";
 
@@ -79,6 +79,7 @@ class Ps5Card extends HTMLElement {
         picture: `{{ state_attr('${this.config.activity_entity}', 'title_image') }}`,
         badge_icon: `{{ 'mdi:controller' if is_state('${this.config.activity_entity}', 'playing') else 'mdi:sleep' if is_state('${this.config.activity_entity}', 'idle') else none }}`,
         tap_action: { action: "fire-dom-event", ps5_card: { action: "open" } },
+        icon_tap_action: { action: "toggle" },
         hold_action: { action: "toggle" },
       };
       this.innerCard = helpers.createCardElement(innerConfig);

@@ -78,6 +78,7 @@ class Ps5Card extends HTMLElement {
         picture: `{{ state_attr('${this.config.activity_entity}', 'title_image') }}`,
         badge_icon: `{{ 'mdi:controller' if is_state('${this.config.activity_entity}', 'playing') else 'mdi:sleep' if is_state('${this.config.activity_entity}', 'idle') else none }}`,
         tap_action: { action: "fire-dom-event", ps5_card: { action: "open" } },
+        icon_tap_action: { action: "toggle" },
         hold_action: { action: "toggle" },
       };
       this.innerCard = helpers.createCardElement(innerConfig);
