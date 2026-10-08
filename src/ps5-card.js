@@ -37,6 +37,16 @@ const popupStyles = `
 `;
 
 class Ps5Card extends HTMLElement {
+  connectedCallback() {
+    window.__ps5Cards = window.__ps5Cards || new Set();
+    window.__ps5Cards.add(this);
+  }
+
+  disconnectedCallback() {
+    window.__ps5Cards?.delete(this);
+    this.closePopup();
+  }
+
   setConfig(config) {
     if (!config?.power_entity || !config?.activity_entity) {
       throw new Error("ps5-card requires power_entity and activity_entity");
@@ -135,5 +145,13 @@ class Ps5CardEditor extends HTMLElement {
 customElements.define("ps5-card-editor", Ps5CardEditor);
 
 customElements.define(CARD_TYPE, Ps5Card);
+window.addEventListener("ll-custom", (event) => {
+  const detail = event.detail || {};
+  const action = detail.action || detail;
+  const request = action.ps5_card;
+  if (request?.action !== "open") return;
+  const entity = request.power_entity;
+  [...(window.__ps5Cards || [])].find((card) => !entity || card.config.power_entity === entity)?.openPopup();
+});
 window.customCards = window.customCards || [];
 window.customCards.push({ type: CARD_TYPE, name: "PS5 Card", description: "A PlayStation 5 status card with a built-in popup.", preview: true });
