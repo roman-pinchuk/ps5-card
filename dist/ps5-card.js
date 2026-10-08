@@ -1,4 +1,4 @@
-/* ps5-card v0.5.3 */
+/* ps5-card v0.5.4 */
 const CARD_TYPE = "ps5-card";
 const DEFAULT_NAME = "PS5 Pro";
 
@@ -37,13 +37,12 @@ const styles = `
 
 const popupStyles = `
 .ps5-backdrop { position:absolute; inset:-15%; width:130%; height:130%; background-position:center; background-size:cover; filter:blur(28px) saturate(1.3); opacity:.52; z-index:-3; }
- .ps5-idle-glow { position:absolute; inset:56px 0 44px; border-radius:50%; background:radial-gradient(ellipse at 50% 35%,#244fac 0%,#131e3d 48%,#090e1c 100%); filter:blur(16px); opacity:.82; z-index:-3; }
-.ps5-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,12,25,.38),rgba(7,12,25,.06) 40%,rgba(7,12,25,.94) 100%); z-index:-2; }
+ .ps5-idle-glow { position:absolute; inset:56px 0 44px; border-radius:50%; background:radial-gradient(ellipse at 50% 35%,rgba(36,79,172,.88) 0%,rgba(36,79,172,.42) 38%,transparent 72%); filter:blur(16px); opacity:.82; z-index:-3; }
+ .ps5-shade { position:absolute; inset:0; background:transparent; z-index:-2; }
 .idle-art { position:relative; z-index:1; display:flex; align-items:center; flex-direction:column; gap:10px; width:min(300px,90%); filter:drop-shadow(0 0 18px rgba(73,137,255,.25)); }
 .ps5-color-mark { display:block; width:min(300px,100%); height:auto; max-height:180px; object-fit:contain; }
 .ps5-symbols { display:block; width:82%; height:auto; color:#b5ceff; opacity:.82; fill:none; stroke:currentColor; stroke-width:4; stroke-linejoin:round; }
- .popup.light .ps5-idle-glow { background:radial-gradient(ellipse at 50% 35%,#dbeafe 0%,#eef4ff 48%,#f7f9ff 100%); opacity:.72; }
-.popup.light .ps5-shade { background:linear-gradient(180deg,rgba(247,249,255,.08),rgba(247,249,255,.18) 40%,rgba(247,249,255,.9) 100%); }
+ .popup.light .ps5-idle-glow { background:radial-gradient(ellipse at 50% 35%,rgba(173,205,255,.72) 0%,rgba(173,205,255,.32) 38%,transparent 72%); opacity:.72; }
 .popup.light .idle-art { filter:drop-shadow(0 0 18px rgba(49,95,174,.18)); }
 .popup { --ps5-surface:var(--card-background-color,#0a1020); --ps5-text:var(--primary-text-color,#eef4ff); --ps5-muted:var(--secondary-text-color,#acbbd5); --ps5-border:var(--divider-color,rgba(255,255,255,.13)); position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:12px; background:rgba(4,8,18,.68); backdrop-filter:blur(8px); font-family:var(--paper-font-body1_-_font-family,var(--ha-font-family,Roboto,sans-serif)); }
 .popup.light { --ps5-surface:#f7f9ff; --ps5-text:#172033; --ps5-muted:#5d6b82; --ps5-border:rgba(38,58,91,.18); background:rgba(39,48,66,.48); }
