@@ -37,13 +37,7 @@ const popupStyles = `
 `;
 
 class Ps5Card extends HTMLElement {
-  connectedCallback() {
-    window.__ps5Cards = window.__ps5Cards || new Set();
-    window.__ps5Cards.add(this);
-  }
-
   disconnectedCallback() {
-    window.__ps5Cards?.delete(this);
     this.closePopup();
   }
 
@@ -54,29 +48,46 @@ class Ps5Card extends HTMLElement {
     this.config = { name: DEFAULT_NAME, ...config };
     if (!this.shadowRoot) {
       this.attachShadow({ mode: "open" });
-      this.shadowRoot.innerHTML = `<style>${styles}</style><div class="card" role="button" tabindex="0"></div>`;
+      this.shadowRoot.innerHTML = `<style>:host { display:block; }</style><div class="card"></div>`;
       this.card = this.shadowRoot.querySelector(".card");
-      this.card.addEventListener("click", () => this.openPopup());
-      this.card.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.openPopup(); }
+      this.card.addEventListener("ll-custom", (event) => {
+        if (event.detail?.ps5_card?.action === "open") this.openPopup();
       });
     }
+    this._loadInnerCard();
   }
 
-  set hass(value) { this._hass = value; this.render(); if (this.popup) this.renderPopup(); }
+  set hass(value) {
+    this._hass = value;
+    if (this.innerCard) this.innerCard.hass = value;
+    if (this.popup) this.renderPopup();
+  }
   get hass() { return this._hass; }
 
-  render() {
-    if (!this.card || !this._hass) return;
-    const power = this._hass.states[this.config.power_entity];
-    const activity = this._hass.states[this.config.activity_entity];
-    const state = power?.state;
-    const available = state === "on" || state === "off";
-    const playing = state === "on" && activity?.state === "playing";
-    const title = playing ? (activity.attributes.title_name || "Your game") : this.config.name;
-    const status = playing ? "Playing" : state === "on" ? "Online" : available ? "Rest mode" : "Offline";
-    this.card.className = `card ${available ? state === "on" ? "awake" : "resting" : "offline"}`;
-    this.card.innerHTML = `<div class="content"><div class="icon"><ha-icon icon="mdi:sony-playstation"></ha-icon></div><div class="copy"><div class="eyebrow">PLAYSTATION / SESSION</div><div class="title">${escapeHtml(title)}</div><div class="subtitle">${escapeHtml(playing ? (activity.attributes.players || []).join(" · ") || "Now playing" : this.config.name)}</div></div><div class="status"><span class="dot"></span>${status}</div></div>`;
+  async _loadInnerCard() {
+    if (this.innerCard || this._loading) return;
+    this._loading = true;
+    try {
+      const helpers = await window.loadCardHelpers();
+      const innerConfig = {
+        type: "custom:mushroom-template-card",
+        primary: this.config.name,
+        secondary: `{{ state_attr('${this.config.activity_entity}', 'title_name') or states('${this.config.power_entity}') }}`,
+        icon: "mdi:sony-playstation",
+        entity: this.config.power_entity,
+        picture: `{{ state_attr('${this.config.activity_entity}', 'title_image') }}`,
+        badge_icon: `{{ 'mdi:controller' if is_state('${this.config.activity_entity}', 'playing') else 'mdi:sleep' if is_state('${this.config.activity_entity}', 'idle') else none }}`,
+        tap_action: { action: "fire-dom-event", ps5_card: { action: "open" } },
+        hold_action: { action: "toggle" },
+      };
+      this.innerCard = helpers.createCardElement(innerConfig);
+      this.card.append(this.innerCard);
+      this.innerCard.hass = this._hass;
+    } catch (error) {
+      this.card.textContent = `Unable to load Mushroom card: ${error?.message || error}`;
+    } finally {
+      this._loading = false;
+    }
   }
 
   openPopup() {
@@ -145,12 +156,5 @@ class Ps5CardEditor extends HTMLElement {
 customElements.define("ps5-card-editor", Ps5CardEditor);
 
 customElements.define(CARD_TYPE, Ps5Card);
-window.addEventListener("ll-custom", (event) => {
-  const detail = event.detail || {};
-  const request = detail.ps5_card;
-  if (request?.action !== "open") return;
-  const entity = request.power_entity;
-  [...(window.__ps5Cards || [])].find((card) => !entity || card.config.power_entity === entity)?.openPopup();
-});
 window.customCards = window.customCards || [];
 window.customCards.push({ type: CARD_TYPE, name: "PS5 Card", description: "A PlayStation 5 status card with a built-in popup.", preview: true });

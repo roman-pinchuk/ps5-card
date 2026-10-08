@@ -1,6 +1,6 @@
 # PS5 Card for Home Assistant
 
-A standalone Lovelace card for PS5 MQTT. It includes a responsive PlayStation-themed popup and does not require Browser Mod, Mushroom, or Button Card.
+A standalone Lovelace card for PS5 MQTT. It uses the installed Mushroom card for the compact dashboard tile and provides its own responsive PlayStation-themed popup. Browser Mod and Button Card are not required.
 
 ## Installation
 
@@ -19,6 +19,8 @@ activity_entity: sensor.ps5_132_activity
 ```
 
 The activity sensor is expected to be supplied by PS5 MQTT and may expose `title_name`, `title_image`, and `players` attributes.
+
+Mushroom must be installed through HACS because the card intentionally uses its standard tile styling.
 
 ## Development
 
