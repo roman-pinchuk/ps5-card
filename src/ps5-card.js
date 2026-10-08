@@ -5,17 +5,11 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 }[character]));
 
+const PLAYSTATION_LOGO = "__PLAYSTATION_LOGO_DATA__";
+
 const idleArtwork = () => `
   <div class="idle-art" role="img" aria-label="PlayStation symbols">
-    <svg class="ps5-color-mark" viewBox="0 0 360 240" aria-hidden="true">
-      <path class="mark-red" d="M151 8h24c57 11 99 33 122 63 22 29 28 67 18 111l-58-14V72c0-18-5-31-16-39-13-10-30-15-50-18Z" />
-      <path class="mark-yellow" d="M0 193c37-23 76-37 117-42l34 10v42l-74 25H0Z" />
-      <path class="mark-teal-left" d="M0 165c40-30 84-48 132-55l19 7v44l-34-10c-41 5-80 19-117 42Z" />
-      <path class="mark-blue-left" d="M132 110c16-5 31-8 47-9v42l-28 10-19-7Z" />
-      <path class="mark-blue-right" d="M198 172c46-25 99-35 162-31v50c-55-7-106 1-153 25l-9-3Z" />
-      <path class="mark-teal-right" d="M198 172v41l79 27c26-14 54-24 83-29v-20c-63-4-116 6-162 31Z" />
-      <path class="mark-yellow-right" d="M198 213v27h-44v-42l44-12Z" />
-    </svg>
+    <img class="ps5-color-mark" src="${PLAYSTATION_LOGO}" alt="" />
     <svg class="ps5-symbols" viewBox="0 0 360 70" aria-hidden="true">
       <path d="m42 61 22-43 22 43H42Z" />
       <circle cx="139" cy="39" r="21" />
@@ -45,9 +39,8 @@ const popupStyles = `
 .ps5-idle-glow { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 35%,#244fac,#131e3d 45%,#090e1c 100%); z-index:-3; }
 .ps5-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,12,25,.38),rgba(7,12,25,.06) 40%,rgba(7,12,25,.94) 100%); z-index:-2; }
 .idle-art { position:relative; z-index:1; display:flex; align-items:center; flex-direction:column; gap:10px; width:min(300px,90%); filter:drop-shadow(0 0 18px rgba(73,137,255,.25)); }
-.ps5-color-mark { display:block; width:100%; height:auto; max-height:180px; }
+.ps5-color-mark { display:block; width:min(300px,100%); height:auto; max-height:180px; object-fit:contain; }
 .ps5-symbols { display:block; width:82%; height:auto; color:#b5ceff; opacity:.82; fill:none; stroke:currentColor; stroke-width:4; stroke-linejoin:round; }
-.mark-red { fill:#ed1b24; }.mark-yellow,.mark-yellow-right { fill:#ffbd19; }.mark-teal-left,.mark-teal-right { fill:#09aa9f; }.mark-blue-left,.mark-blue-right { fill:#0879bd; }
 .popup.light .ps5-idle-glow { background:radial-gradient(ellipse at 50% 35%,#dbeafe,#eef4ff 48%,#f7f9ff 100%); }
 .popup.light .ps5-shade { background:linear-gradient(180deg,rgba(247,249,255,.08),rgba(247,249,255,.18) 40%,rgba(247,249,255,.9) 100%); }
 .popup.light .idle-art { filter:drop-shadow(0 0 18px rgba(49,95,174,.18)); }

@@ -1,7 +1,7 @@
 {
   "name": "ps5-card",
   "private": true,
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A standalone PlayStation 5 Lovelace card for Home Assistant",
   "scripts": {
     "build": "node build.mjs",
