@@ -5,6 +5,28 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 }[character]));
 
+const idleArtwork = () => `
+  <svg class="ps5-vector-art" viewBox="0 0 360 220" role="img" aria-label="PlayStation symbols">
+    <defs>
+      <radialGradient id="ps5-glow" cx="50%" cy="48%" r="52%">
+        <stop offset="0" stop-color="currentColor" stop-opacity=".28" />
+        <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <ellipse cx="180" cy="110" rx="150" ry="104" fill="url(#ps5-glow)" />
+    <g class="ps5-logo" fill="currentColor">
+      <path d="M153 39v101l20 7V65c0-9 4-13 10-11 8 3 11 10 11 19v39l20-8V67c0-22-8-35-25-41-19-7-36 3-36 13Z" />
+      <path d="M153 150v20l44 17c16 6 29 3 29-8 0-8-6-14-17-18l-56-18Z" />
+      <path d="M132 153 92 168c-11 4-16 10-16 17 0 10 12 13 27 7l55-22v-20l-26 3Z" />
+    </g>
+    <g class="ps5-symbols" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round">
+      <path d="m55 199 18-31 18 31H55Z" />
+      <circle cx="139" cy="185" r="16" />
+      <path d="m207 169 29 32m0-32-29 32" />
+      <rect x="281" y="169" width="32" height="32" />
+    </g>
+  </svg>`;
+
 const styles = `
 :host { display:block; }
 .card { position:relative; overflow:hidden; min-height:72px; padding:12px 14px; box-sizing:border-box; border:1px solid var(--ha-card-border-color,rgba(255,255,255,.12)); border-radius:16px; color:var(--primary-text-color,#eef4ff); background:var(--ha-card-background,var(--card-background-color,#1c1c1c)); cursor:pointer; box-shadow:var(--ha-card-box-shadow,none); }
@@ -25,14 +47,17 @@ const popupStyles = `
 .ps5-backdrop { position:absolute; inset:-15%; width:130%; height:130%; background-position:center; background-size:cover; filter:blur(28px) saturate(1.3); opacity:.52; z-index:-3; }
 .ps5-idle-glow { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 35%,#244fac,#131e3d 45%,#090e1c 100%); z-index:-3; }
 .ps5-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,12,25,.38),rgba(7,12,25,.06) 40%,rgba(7,12,25,.94) 100%); z-index:-2; }
-.popup { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:12px; background:rgba(4,8,18,.68); backdrop-filter:blur(8px); }
-.panel { position:relative; overflow:hidden; isolation:isolate; width:min(540px,100%); max-height:92dvh; overflow-y:auto; border-radius:28px; color:var(--primary-text-color,#eef4ff); background:var(--card-background-color,#0a1020); box-shadow:0 24px 90px rgba(0,0,0,.65),0 0 45px rgba(27,65,151,.16); }
+.ps5-vector-art { width:min(360px,90%); height:auto; color:#b5ceff; filter:drop-shadow(0 0 18px rgba(73,137,255,.45)); }
+.ps5-vector-art .ps5-logo { opacity:.98; }.ps5-vector-art .ps5-symbols { opacity:.8; }
+.popup { --ps5-surface:var(--card-background-color,#0a1020); --ps5-text:var(--primary-text-color,#eef4ff); --ps5-muted:var(--secondary-text-color,#acbbd5); --ps5-border:var(--divider-color,rgba(255,255,255,.13)); position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:12px; background:rgba(4,8,18,.68); backdrop-filter:blur(8px); font-family:var(--paper-font-body1_-_font-family,var(--ha-font-family,Roboto,sans-serif)); }
+.popup.light { --ps5-surface:#f7f9ff; --ps5-text:#172033; --ps5-muted:#5d6b82; --ps5-border:rgba(38,58,91,.18); background:rgba(39,48,66,.48); }
+.panel { position:relative; overflow:hidden; isolation:isolate; width:min(540px,100%); max-height:92dvh; overflow-y:auto; border-radius:28px; color:var(--ps5-text); background:var(--ps5-surface); box-shadow:0 24px 90px rgba(0,0,0,.65),0 0 45px rgba(27,65,151,.16); }
 .popup-header { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:16px 18px 0; }
-.popup-header strong { font-size:17px; }.close { border:0; padding:6px; border-radius:50%; color:var(--secondary-text-color,#a7b9df); background:transparent; cursor:pointer; font-size:25px; line-height:1; }.close:hover { background:var(--secondary-background-color,rgba(255,255,255,.08)); }
-.hero { position:relative; padding:20px 24px 24px; }.topline { display:flex; justify-content:space-between; align-items:center; gap:10px; }.session { color:var(--secondary-text-color,#c2d0ef); font-size:10px; letter-spacing:2.2px; font-weight:700; }.pill { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--divider-color,rgba(255,255,255,.13)); border-radius:99px; background:var(--secondary-background-color,rgba(255,255,255,.07)); font-size:11px; font-weight:600; white-space:nowrap; }.pill .dot { width:6px; height:6px; border-radius:50%; background:#f0b429; }.pill.playing .dot,.pill.online .dot { background:#35c98b; box-shadow:0 0 10px #35c98b88; }.pill.resting .dot { background:#f0b429; box-shadow:0 0 10px #f0b42988; }.pill.offline .dot { background:#e05252; box-shadow:0 0 10px #e0525288; }
-.artwork { min-height:218px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:18px; }.cover { width:218px; height:218px; object-fit:contain; border-radius:14px; box-shadow:0 18px 42px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.18); }.console-icon { --mdc-icon-size:108px; color:#d9e6ff; filter:drop-shadow(0 0 24px #4384ff77); }.symbols { color:#8dacec; font-size:23px; letter-spacing:16px; margin-left:16px; }
-.eyebrow { margin-bottom:9px; color:var(--primary-color,#83b2ff); font-size:10px; font-weight:800; letter-spacing:2.5px; }.caption h2 { margin:0; overflow-wrap:anywhere; font-size:27px; line-height:1.18; letter-spacing:-.6px; }.player { display:flex; align-items:center; gap:8px; margin-top:13px; color:var(--secondary-text-color,#acbbd5); font-size:12px; line-height:1.5; }.player ha-icon { --mdc-icon-size:17px; color:var(--primary-color,#86a4d8); }
-.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px; }.action { min-height:74px; padding:14px; border:1px solid var(--divider-color,rgba(157,180,226,.14)); border-radius:16px; color:var(--primary-text-color,#eff5ff); background:var(--secondary-background-color,rgba(122,153,221,.08)); text-align:left; cursor:pointer; }.action.primary { border-color:var(--primary-color,#82a9ff); background:linear-gradient(135deg,var(--primary-color,#285ee7),var(--dark-primary-color,#1844bb)); box-shadow:0 5px 16px rgba(21,61,159,.18); }.action:disabled { cursor:default; opacity:.5; }.action-icon { float:left; display:block; width:24px; height:24px; margin:10px 10px 0 0; }.action-icon ha-icon { --mdc-icon-size:24px; }.action strong, .action small { display:block; }.action strong { padding-top:3px; font-size:13px; }.action small { margin-top:4px; color:var(--secondary-text-color,#b4c9fa); font-size:10px; }
+.popup-header strong { font-size:17px; }.close { border:0; padding:6px; border-radius:50%; color:var(--ps5-muted); background:transparent; cursor:pointer; font-size:25px; line-height:1; }.close:hover { background:var(--ps5-border); }
+.hero { position:relative; padding:20px 24px 24px; }.topline { display:flex; justify-content:space-between; align-items:center; gap:10px; }.session { color:var(--ps5-muted); font-size:10px; letter-spacing:2.2px; font-weight:700; }.pill { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--ps5-border); border-radius:99px; background:var(--ps5-surface); font-size:11px; font-weight:600; white-space:nowrap; }.pill .dot { width:6px; height:6px; border-radius:50%; background:#f0b429; }.pill.playing .dot,.pill.online .dot { background:#35c98b; box-shadow:0 0 10px #35c98b88; }.pill.resting .dot { background:#f0b429; box-shadow:0 0 10px #f0b42988; }.pill.offline .dot { background:#e05252; box-shadow:0 0 10px #e0525288; }
+.artwork { min-height:218px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:18px; }.cover { width:218px; height:218px; object-fit:contain; border-radius:14px; box-shadow:0 18px 42px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.18); }.console-icon { --mdc-icon-size:108px; color:#d9e6ff; filter:drop-shadow(0 0 24px #4384ff77); }
+.eyebrow { margin-bottom:9px; color:var(--primary-color,#83b2ff); font-size:10px; font-weight:800; letter-spacing:2.5px; }.caption h2 { margin:0; overflow-wrap:anywhere; font-size:27px; line-height:1.18; letter-spacing:-.6px; }.player { display:flex; align-items:center; gap:8px; margin-top:13px; color:var(--ps5-muted); font-size:12px; line-height:1.5; }.player ha-icon { --mdc-icon-size:17px; color:var(--primary-color,#86a4d8); }
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px; }.action { min-height:82px; padding:14px 16px; border:1px solid var(--ps5-border); border-radius:16px; color:var(--ps5-text); background:color-mix(in srgb,var(--ps5-surface) 88%,var(--primary-color) 12%); text-align:left; cursor:pointer; font:inherit; }.action.primary { border-color:var(--primary-color,#82a9ff); color:#fff; background:linear-gradient(135deg,#159bd2,#0872bd); box-shadow:0 5px 16px rgba(21,61,159,.18); }.action:disabled { cursor:default; opacity:.5; }.action-icon { float:left; display:grid; place-items:center; width:28px; height:28px; margin:8px 12px 0 0; }.action-icon ha-icon { --mdc-icon-size:24px; }.action strong, .action small { display:block; }.action strong { padding-top:2px; font-size:16px; font-weight:700; line-height:1.25; }.action small { margin-top:5px; color:var(--ps5-muted); font-size:12px; line-height:1.25; }.action.primary small { color:#d8f1ff; }
 @media (max-width:450px) { .panel { border-radius:24px; }.hero { padding:16px 20px 20px; }.artwork { min-height:190px; }.cover { width:190px; height:190px; }.caption h2 { font-size:23px; } }
 `;
 
@@ -98,7 +123,7 @@ class Ps5Card extends HTMLElement {
   openPopup() {
     if (this.popup) return;
     this.popup = document.createElement("div");
-    this.popup.className = "popup";
+    this.popup.className = `popup${this._hass?.themes?.darkMode === false ? " light" : ""}`;
     this.popup.innerHTML = `<style>${popupStyles}</style><section class="panel" role="dialog" aria-modal="true" aria-label="${escapeHtml(this.config.name)}"><header class="popup-header"><strong>${escapeHtml(this.config.name)}</strong><button class="close" type="button" aria-label="Close">×</button></header><div class="hero"></div></section>`;
     document.body.append(this.popup);
     this.popup.querySelector(".close").addEventListener("click", () => this.closePopup());
@@ -110,20 +135,21 @@ class Ps5Card extends HTMLElement {
 
   renderPopup() {
     if (!this.popup || !this._hass) return;
+    this.popup.classList.toggle("light", this._hass.themes?.darkMode === false);
     const power = this._hass.states[this.config.power_entity];
     const activity = this._hass.states[this.config.activity_entity];
     const state = power?.state;
     const online = state === "on" || state === "off";
     const awake = state === "on";
     const playing = awake && activity?.state === "playing";
-    const image = playing && typeof activity.attributes.title_image === "string" && activity.attributes.title_image.startsWith("https://") ? activity.attributes.title_image : "";
+    const image = playing && typeof activity?.attributes?.title_image === "string" && activity.attributes.title_image.startsWith("https://") ? activity.attributes.title_image : "";
     const players = Array.isArray(activity?.attributes?.players) ? activity.attributes.players : [];
     const title = playing ? (activity.attributes.title_name || "Your game") : awake ? "Ready when you are." : online ? "See you next session." : "Waiting for your console.";
     const status = playing ? "Playing" : awake ? "Online" : online ? "Rest mode" : "Offline";
     const eyebrow = playing ? "NOW PLAYING" : awake ? "READY TO PLAY" : online ? "TAKING A BREAK" : "CONSOLE STATUS";
     const subtitle = players.length ? players.join(" · ") : awake ? "Your next adventure is one tap away." : online ? "Wake your PS5 with the power button below." : "Check that your PS5 is connected to the network.";
     const statusClass = playing ? "playing" : awake ? "online" : online ? "resting" : "offline";
-    this.popup.querySelector(".hero").innerHTML = `<div class="${image ? "ps5-backdrop" : "ps5-idle-glow"}" ${image ? `style="background-image:url('${escapeHtml(image)}')"` : ""}></div><div class="ps5-shade"></div><div class="topline"><span class="session">PLAYSTATION / SESSION</span><span class="pill ${statusClass}"><span class="dot"></span>${status}</span></div><div class="artwork">${image ? `<img class="cover" src="${escapeHtml(image)}" alt="">` : `<ha-icon class="console-icon" icon="mdi:sony-playstation"></ha-icon><div class="symbols">△ ○ × □</div>`}</div><div class="caption"><div class="eyebrow">${eyebrow}</div><h2>${escapeHtml(title)}</h2>${players.length ? `<div class="player"><ha-icon icon="mdi:account-circle-outline"></ha-icon><span>${escapeHtml(players.join(" · "))}</span></div>` : `<div class="player"><ha-icon icon="mdi:controller"></ha-icon><span>${escapeHtml(subtitle)}</span></div>`}</div><div class="actions"><button class="action primary" data-service="turn_on" ${state !== "off" ? "disabled" : ""}><span class="action-icon"><ha-icon icon="mdi:power"></ha-icon></span><strong>Power on</strong><small>${state === "off" ? "Start your session" : state === "on" ? "Already awake" : "Unavailable"}</small></button><button class="action" data-service="turn_off" ${state !== "on" ? "disabled" : ""}><span class="action-icon"><ha-icon icon="mdi:power-sleep"></ha-icon></span><strong>Rest mode</strong><small>${state === "on" ? "Pause your session" : state === "off" ? "Already resting" : "Unavailable"}</small></button></div>`;
+    this.popup.querySelector(".hero").innerHTML = `<div class="${image ? "ps5-backdrop" : "ps5-idle-glow"}" ${image ? `style="background-image:url('${escapeHtml(image)}')"` : ""}></div><div class="ps5-shade"></div><div class="topline"><span class="session">PLAYSTATION / SESSION</span><span class="pill ${statusClass}"><span class="dot"></span>${status}</span></div><div class="artwork">${image ? `<img class="cover" src="${escapeHtml(image)}" alt="">` : idleArtwork()}</div><div class="caption"><div class="eyebrow">${eyebrow}</div><h2>${escapeHtml(title)}</h2>${players.length ? `<div class="player"><ha-icon icon="mdi:account-circle-outline"></ha-icon><span>${escapeHtml(players.join(" · "))}</span></div>` : `<div class="player"><ha-icon icon="mdi:controller"></ha-icon><span>${escapeHtml(subtitle)}</span></div>`}</div><div class="actions"><button class="action primary" data-service="turn_on" ${state !== "off" ? "disabled" : ""}><span class="action-icon"><ha-icon icon="mdi:power"></ha-icon></span><strong>Power on</strong><small>${state === "off" ? "Start your session" : state === "on" ? "Already awake" : "Unavailable"}</small></button><button class="action" data-service="turn_off" ${state !== "on" ? "disabled" : ""}><span class="action-icon"><ha-icon icon="mdi:power-sleep"></ha-icon></span><strong>Rest mode</strong><small>${state === "on" ? "Pause your session" : state === "off" ? "Already resting" : "Unavailable"}</small></button></div>`;
     this.popup.querySelectorAll("[data-service]").forEach((button) => button.addEventListener("click", () => this.callPower(button.dataset.service)));
   }
 
