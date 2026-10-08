@@ -83,6 +83,10 @@ class Ps5Card extends HTMLElement {
       };
       this.innerCard = helpers.createCardElement(innerConfig);
       this.card.append(this.innerCard);
+      this.innerCard.addEventListener("click", (event) => {
+        const clickedIcon = event.composedPath().some((node) => node?.tagName === "HA-TILE-ICON");
+        if (!clickedIcon) this.openPopup();
+      });
       this.innerCard.hass = this._hass;
     } catch (error) {
       this.card.textContent = `Unable to load Mushroom card: ${error?.message || error}`;
