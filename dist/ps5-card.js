@@ -1,4 +1,4 @@
-/* ps5-card v0.1.0 */
+/* ps5-card v0.1.1 */
 const CARD_TYPE = "ps5-card";
 const DEFAULT_NAME = "PS5 Pro";
 
@@ -8,17 +8,16 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character
 
 const styles = `
 :host { display:block; }
-.card { position:relative; overflow:hidden; min-height:118px; padding:18px; box-sizing:border-box; border-radius:20px; color:#eef4ff; background:radial-gradient(circle at 75% 25%,#244fac,#131e3d 45%,#090e1c); cursor:pointer; box-shadow:0 8px 24px rgba(7,12,25,.18); }
+.card { position:relative; overflow:hidden; min-height:72px; padding:12px 14px; box-sizing:border-box; border:1px solid var(--ha-card-border-color,rgba(255,255,255,.12)); border-radius:16px; color:var(--primary-text-color,#eef4ff); background:var(--ha-card-background,var(--card-background-color,#1c1c1c)); cursor:pointer; box-shadow:var(--ha-card-box-shadow,none); }
 .card:focus-visible, button:focus-visible { outline:2px solid #83b2ff; outline-offset:3px; }
-.card::after { content:""; position:absolute; inset:0; background:linear-gradient(120deg,rgba(7,12,25,.15),rgba(7,12,25,.8)); pointer-events:none; }
 .content { position:relative; z-index:1; display:flex; align-items:center; gap:15px; min-width:0; }
-.icon { display:grid; place-items:center; width:54px; height:54px; flex:none; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.09); }
-.icon ha-icon { --mdc-icon-size:30px; color:#d9e6ff; }
+.icon { display:grid; place-items:center; width:48px; height:48px; flex:none; border-radius:50%; background:var(--secondary-background-color,rgba(255,255,255,.09)); }
+.icon ha-icon { --mdc-icon-size:27px; color:var(--primary-text-color,#d9e6ff); }
 .copy { min-width:0; flex:1; }
-.eyebrow { margin-bottom:5px; color:#83b2ff; font-size:10px; font-weight:800; letter-spacing:2px; }
-.title { overflow:hidden; color:#f4f7ff; font-size:17px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
-.subtitle { overflow:hidden; margin-top:4px; color:#acbbd5; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.status { align-self:flex-start; display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid rgba(255,255,255,.13); border-radius:99px; background:rgba(255,255,255,.07); color:#d5e1fa; font-size:10px; white-space:nowrap; }
+.eyebrow { display:none; }
+.title { overflow:hidden; color:var(--primary-text-color,#f4f7ff); font-size:16px; font-weight:500; text-overflow:ellipsis; white-space:nowrap; }
+.subtitle { overflow:hidden; margin-top:3px; color:var(--secondary-text-color,#acbbd5); font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
+.status { align-self:center; display:flex; align-items:center; gap:6px; padding:5px 7px; border:1px solid rgba(255,255,255,.13); border-radius:99px; background:rgba(255,255,255,.07); color:var(--secondary-text-color,#d5e1fa); font-size:10px; white-space:nowrap; }
 .dot { width:6px; height:6px; border-radius:50%; background:#79e6b1; box-shadow:0 0 10px #79e6b188; }
 .resting .dot { background:#b6b8ff; box-shadow:0 0 10px #b6b8ff55; }.offline .dot { background:#8d97aa; box-shadow:none; }
 `;
@@ -44,13 +43,15 @@ class Ps5Card extends HTMLElement {
       throw new Error("ps5-card requires power_entity and activity_entity");
     }
     this.config = { name: DEFAULT_NAME, ...config };
-    this.attachShadow({ mode: "open" });
-    this.shadowRoot.innerHTML = `<style>${styles}</style><div class="card" role="button" tabindex="0"></div>`;
-    this.card = this.shadowRoot.querySelector(".card");
-    this.card.addEventListener("click", () => this.openPopup());
-    this.card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.openPopup(); }
-    });
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: "open" });
+      this.shadowRoot.innerHTML = `<style>${styles}</style><div class="card" role="button" tabindex="0"></div>`;
+      this.card = this.shadowRoot.querySelector(".card");
+      this.card.addEventListener("click", () => this.openPopup());
+      this.card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.openPopup(); }
+      });
+    }
   }
 
   set hass(value) { this._hass = value; this.render(); if (this.popup) this.renderPopup(); }
@@ -115,7 +116,7 @@ class Ps5Card extends HTMLElement {
 
   closePopup() { this.popup?.remove(); this.popup = undefined; document.removeEventListener("keydown", this._keyHandler); }
   getCardSize() { return 2; }
-  getGridOptions() { return { rows: 2, columns: 6, min_rows: 2, min_columns: 3 }; }
+  getGridOptions() { return { rows: 1, columns: 6, min_rows: 1, min_columns: 3 }; }
 
   static getConfigElement() { return document.createElement("ps5-card-editor"); }
   static getStubConfig() { return { name: DEFAULT_NAME, power_entity: "switch.ps5_132_power", activity_entity: "sensor.ps5_132_activity" }; }
