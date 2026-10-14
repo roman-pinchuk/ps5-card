@@ -69,9 +69,22 @@ class Ps5Card extends HTMLElement {
       this.attachShadow({ mode: "open" });
       this.shadowRoot.innerHTML = `<style>:host { display:block; }</style><div class="card"></div>`;
       this.card = this.shadowRoot.querySelector(".card");
-      this.card.addEventListener("ll-custom", (event) => {
-        if (event.detail?.ps5_card?.action === "open") this.openPopup();
-      });
+      const openFromAction = (event) => {
+        const detail = event.detail || {};
+        const customAction = detail.ps5_card?.action;
+        const hassAction = detail.action;
+        const actionConfig = detail.config?.tap_action;
+        if (
+          customAction === "open" ||
+          (hassAction === "tap" && actionConfig?.action === "fire-dom-event" && actionConfig.ps5_card?.action === "open")
+        ) {
+          this.openPopup();
+        }
+      };
+      // Home Assistant used ll-custom for fire-dom-event actions historically;
+      // newer frontend versions forward the same action as hass-action.
+      this.card.addEventListener("ll-custom", openFromAction);
+      this.card.addEventListener("hass-action", openFromAction);
     }
     this._loadInnerCard();
   }
